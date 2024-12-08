@@ -1,6 +1,19 @@
 ## Models Table
 
 ```sql
+CREATE TYPE public.training_status AS ENUM(
+  'starting',
+  'processing',
+  'succeeded',
+  'failed',
+  'canceled'
+);
+
+CREATE TYPE public.gender AS ENUM(
+  'man',
+  'women'
+);
+
 CREATE TABLE
   public.models (
     id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
