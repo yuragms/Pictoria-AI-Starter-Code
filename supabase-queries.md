@@ -31,6 +31,23 @@ CREATE TABLE
     CONSTRAINT models_pkey PRIMARY KEY (id),
     CONSTRAINT models_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users (id)
   ) TABLESPACE pg_default;
+
+-- Enable ROW level security
+ALTER TABLE public.models ENABLE ROW LEVEL SECURITY;
+
+-- Enable delete for users based on user_id
+create policy "Enable delete for users based on user_id"
+on "public"."models"
+for delete
+to authenticated
+using ((( SELECT auth.uid() AS uid) = user_id));
+
+-- Enable users to view their own data only
+create policy "Enable users to view their own data only"
+on "public"."models"
+for select
+to authenticated
+using ((( SELECT auth.uid() AS uid) = user_id));
 ```
 
 ## Generated Images Table
@@ -53,6 +70,30 @@ CREATE TABLE
     CONSTRAINT generated_images_pkey PRIMARY KEY (id),
     CONSTRAINT generated_images_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users (id)
   ) TABLESPACE pg_default;
+
+-- Enable ROW level security
+ALTER TABLE public.generated_images ENABLE ROW LEVEL SECURITY;
+
+-- Enable users to view their own data only 
+create policy "Enable users to view their own data only"
+on "public"."generated_images"
+for select
+to authenticated
+using ((( SELECT auth.uid() AS uid) = user_id));
+
+-- Enable users to insert their own data only 
+create policy "Enable insert for users based on user_id"
+on "public"."generated_images"
+for insert
+to authenticated
+with check ((( SELECT auth.uid() AS uid) = user_id));
+
+-- Enable delete for users based on user_id
+create policy "Enable delete for users based on user_id"
+on "public"."generated_images"
+for delete
+to authenticated
+using ((( SELECT auth.uid() AS uid) = user_id));
 ```
 
 ## Credits Table
@@ -70,6 +111,38 @@ CREATE TABLE
     CONSTRAINT credits_pkey PRIMARY KEY (id),
     CONSTRAINT credits_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
   ) TABLESPACE pg_default;
+
+-- Enable ROW level security
+ALTER TABLE public.credits ENABLE ROW LEVEL SECURITY;
+
+-- Enable users to view their own data only
+create policy "Enable users to view their own data only"
+on "public"."credits"
+for select
+to authenticated
+using ((( SELECT auth.uid() AS uid) = user_id));
+```
+
+## Storage Bucket Policies
+
+```sql
+-- Give users access to own folder n1g4dk_2
+CREATE POLICY "Give users access to own folder n1g4dk_2" ON storage.objects
+FOR DELETE
+TO authenticated
+USING ((bucket_id = 'generated_images'::text) AND ((SELECT (auth.uid())::text AS uid) = (storage.foldername(name))[1]));
+
+-- Give users access to own folder n1g4dk_1
+CREATE POLICY "Give users access to own folder n1g4dk_1" ON storage.objects
+FOR SELECT
+TO authenticated
+USING ((bucket_id = 'generated_images'::text) AND ((SELECT (auth.uid())::text AS uid) = (storage.foldername(name))[1]));
+
+-- Give users access to own folder n1g4dk_0
+CREATE POLICY "Give users access to own folder n1g4dk_0" ON storage.objects
+FOR INSERT
+TO authenticated
+WITH CHECK ((bucket_id = 'generated_images'::text) AND ((SELECT (auth.uid())::text AS uid) = (storage.foldername(name))[1]));
 ```
 
 ## Handle New User Function
@@ -95,9 +168,13 @@ return new;
 end;
 ```
 
-## Decrease Credits Function
+## Decrease Credits Function & Trigger
 
 ```sql
+CREATE FUNCTION public.decrease_user_credit()
+RETURNS trigger
+SET search_path = ''
+AS $$
 BEGIN
     -- Decrease the image_generation_count by 1 for the user_id in credits table
     UPDATE public.credits
@@ -106,18 +183,15 @@ BEGIN
 
     RETURN NEW;
 END;
-```
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-## Decrease Credits Function Trigger
-
-```sql
 CREATE TRIGGER decrease_credit
 AFTER INSERT ON public.generated_images
 FOR EACH ROW
-EXECUTE FUNCTION public.decrease_user_credit() SECURITY DEFINER;
+EXECUTE FUNCTION public.decrease_user_credit();
 ```
 
-# You can find the following Stripe queries from sql quick start templates of supabase.
+# You can find the following Stripe queries from sql quick start templates of supabase. (Make sure to make required changes or copy and paste the following in SQL editor of supabase)
 
 ```sql
 /**
@@ -150,6 +224,15 @@ as $$
   begin
     insert into public.users (id, full_name)
     values (new.id, new.raw_user_meta_data->>'full_name');
+    -- Insert a new row into the credits table
+    insert into
+      public.credits (
+        user_id,
+        image_generation_count,
+        model_training_count
+      )
+    values
+      (new.id, 0, 0);
     return new;
   end;
 $$
