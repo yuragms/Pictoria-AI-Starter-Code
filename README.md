@@ -92,9 +92,10 @@ Create a `.env.local` file in the root directory. Check `.env.example` for requi
 ### 4. Supabase Database Setup
 
 1. Create a new Supabase project
-2. Execute the SQL queries from `supabase-queries.md` in your Supabase SQL editor (You can also follow the tutorial video to setup the database)
-3. Set up the database triggers and functions
-4. Make sure to setup the right RLS policies (You can also follow the tutorial video to setup the RLS policies)
+2. Create a new storage bucket named `generated_images`
+3. Execute the SQL queries from `supabase-queries.md` in your Supabase SQL editor (You can also follow the tutorial video to setup the database)
+4. Set up the database triggers and functions
+5. Make sure to setup the right RLS policies (You can also follow the tutorial video to setup the RLS policies)
 
 ### 5. AI Model Links
 
