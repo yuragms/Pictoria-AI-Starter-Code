@@ -30,8 +30,10 @@ const AuthemticationPage = () => {
           </blockquote>
         </div>
       </div>
-      <div className="relative flex flex-col items-center justify-center p-8 h-full">
-        <AuthForm />
+      <div className="relative flex flex-col items-center justify-center p-8 h-full  w-full">
+        <div className="w-[350px] mx-auto max-w-xl">
+          <AuthForm />
+        </div>
       </div>
     </main>
   );
