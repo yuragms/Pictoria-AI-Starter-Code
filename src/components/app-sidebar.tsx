@@ -1,7 +1,7 @@
-'use client';
+// 'use client';
 
 import * as React from 'react';
-import { Image, Sparkles, SquareTerminal } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
 import {
@@ -12,21 +12,24 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from '@/components/ui/sidebar';
+import { createClient } from '@/lib/supabase/server';
+import { NavUser } from './nav-user';
 
 // This is sample data.
-const data = [
-  {
-    title: 'Dashboard',
-    url: '/dashboard',
-    icon: SquareTerminal,
-  },
-  {
-    title: 'Generate Image',
-    url: '/image-generation',
-    icon: Image,
-  },
-];
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const supbase = await createClient();
+  const { data } = await supbase.auth.getUser();
+
+  // console.log(data);
+
+  const user = {
+    name: data.user?.user_metadata.full_name,
+    email: data.user?.email ?? '',
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -44,10 +47,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data} />
+        <NavMain />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
-      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
