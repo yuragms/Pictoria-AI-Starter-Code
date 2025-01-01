@@ -8,16 +8,13 @@ Transform your photos with the power of AI! Pictoria AI is your ultimate solutio
 
 If you want to learn how to create it please follow below tutorial👇: <br />
 ➡ Tutorial Link 💚: [How to Build a $1M PhotoAI Sass Clone](https://youtu.be/7AQNeii5K7E) <br />
-➡ Final Source Code💛: https://dub.sh/wYWBX9z (Get 40% discount with code **MWMJY2NG** only for next 3 Days) 
-
+➡ Final Source Code💛: https://dub.sh/wYWBX9z (Get 40% discount with code **MWMJY2NG** only for next 3 Days)
 
 🎯 For customised solutions or deployment please contact: https://tally.so/r/wdlj0N
 
-
 #### ⭐DO NOT FORGET TO STAR THIS REPO⭐
 
-## 🚀 Key Features  
-
+## 🚀 Key Features
 
 - 🛠️ Complete SaaS built in modern Next.js
 - 💻 Beautiful landing page included
@@ -35,14 +32,14 @@ If you want to learn how to create it please follow below tutorial👇: <br />
 
 ## Images of The AI App:
 
-![Photo AI clone Dashboard](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Dashboard.png)
----
-![Photo AI clone Image Generation Page](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Image-Generation.png)
----
-![Photo AI clone Model Training Page](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Model-Training.png)
----
-![Photo AI clone Billing Page](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Billing.png)
----
+## ![Photo AI clone Dashboard](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Dashboard.png)
+
+## ![Photo AI clone Image Generation Page](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Image-Generation.png)
+
+## ![Photo AI clone Model Training Page](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Model-Training.png)
+
+## ![Photo AI clone Billing Page](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Billing.png)
+
 ![Photo AI clone Account Settings Page](https://github.com/codebucks27/Pictoria-AI-Starter-Code/blob/main/screenshots/Account-Settings.png)
 
 ## 🛠️ Tech Stack
@@ -60,7 +57,7 @@ If you want to learn how to create it please follow below tutorial👇: <br />
 
 Before you begin, ensure you have:
 
-- Node.js installed (v20.x recommended, v18+ supported) 
+- Node.js installed (v20.x recommended, v18+ supported)
 - A Supabase account
 - A Replicate account
 - A Stripe account
@@ -100,6 +97,7 @@ Create a `.env.local` file in the root directory. Check `.env.example` for requi
 ### 5. AI Model Links
 
 Visit these links to set up your AI models:
+
 - [Flux Dev LORA model trainer](https://replicate.com/ostris/flux-dev-lora-trainer/train)
 - [Flux Dev Model](https://replicate.com/black-forest-labs/flux-dev)
 - [Flux Schnell Model](https://replicate.com/black-forest-labs/flux-schnell)
@@ -109,6 +107,7 @@ For stock images (not for training), I have used [Lummi AI](https://www.lummi.ai
 ### 6. Model Training Requirements
 
 When training your custom model, ensure:
+
 - 10-15 images in total
 - Recommended breakdown for 12 images:
   - 6 face closeups
@@ -167,3 +166,6 @@ If you have any question or want a custom build for your business, you can reach
 
 MyChannel: https://www.youtube.com/codebucks
 My Website: https://devdreaming.com/
+
+yura.gms@gmail.com
+Abc@1234
