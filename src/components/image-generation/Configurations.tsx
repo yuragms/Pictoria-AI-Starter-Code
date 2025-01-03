@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
 } from '../ui/tooltip';
 import { Info } from 'lucide-react';
+import { generateImage } from '@/app/actions/image-actions';
 
 export const ImageGenerationFormSchema = z.object({
   model: z.string({
@@ -82,11 +83,30 @@ const Configurations = () => {
     },
   });
 
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'model') {
+        let newSteps;
+        if (value.model === 'black-forest-labs/flux-schnell') {
+          newSteps = 4;
+        } else {
+          newSteps = 28;
+        }
+
+        if (newSteps !== undefined) {
+          form.setValue('num_inference_steps', newSteps);
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
+  async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    const { error, success, data } = await generateImage(values);
+    console.log(error, success, data);
   }
   return (
     <TooltipProvider>
@@ -263,7 +283,12 @@ const Configurations = () => {
                     <Slider
                       defaultValue={[field.value]}
                       min={1}
-                      max={50}
+                      max={
+                        form.getValues('model') ===
+                        'black-forest-labs/flux-schnell'
+                          ? 4
+                          : 50
+                      }
                       step={1}
                       onValueChange={(value) => field.onChange(value[0])}
                     />
