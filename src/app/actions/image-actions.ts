@@ -2,9 +2,13 @@
 import { z } from 'zod';
 import { ImageGenerationFormSchema } from '@/components/image-generation/Configurations';
 import Replicate from 'replicate';
+import { createClient } from '@/lib/supabase/server';
+import { Database } from '@datatypes.types';
+import { imageMeta } from 'image-meta';
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
+  useFileOutput: false,
 });
 
 interface ImageResponse {
@@ -13,7 +17,7 @@ interface ImageResponse {
   data: any | null;
 }
 
-export async function generateImage(
+export async function generateImageAction(
   input: z.infer<typeof ImageGenerationFormSchema>
 ): Promise<ImageResponse> {
   const modelInput = {
@@ -32,7 +36,7 @@ export async function generateImage(
     const output = await replicate.run(input.model as `${string}/${string}`, {
       input: modelInput,
     });
-
+    console.log('Output', output);
     return {
       error: null,
       success: true,
@@ -44,5 +48,37 @@ export async function generateImage(
       success: false,
       data: null,
     };
+  }
+}
+
+export async function imgUrlToBlob(url: string) {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return blob.arrayBuffer();
+  //  return (await blob).arrayBuffer();
+}
+
+type storeImageInput = {
+  url: string;
+} & Database['public']['Tables']['generated_images']['Insert'];
+
+export async function storeImages(data: storeImageInput) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return {
+      error: 'Unauthorized',
+      success: false,
+      data: null,
+    };
+  }
+  const uploadResults = [];
+
+  for (const img of data) {
+    const arrayBufer = await imgUrlToBlob(img.url);
+    const { width, height, type } = imageMeta(new Uint8Array(arrayBufer));
   }
 }

@@ -29,7 +29,7 @@ import {
   TooltipTrigger,
 } from '../ui/tooltip';
 import { Info } from 'lucide-react';
-import { generateImage } from '@/app/actions/image-actions';
+import useGeneratedStore from '@/store/useGeneratedStore';
 
 export const ImageGenerationFormSchema = z.object({
   model: z.string({
@@ -68,6 +68,7 @@ export const ImageGenerationFormSchema = z.object({
 // });
 
 const Configurations = () => {
+  const generateImage = useGeneratedStore((state) => state.generateImage);
   // 1. Define your form.
   const form = useForm<z.infer<typeof ImageGenerationFormSchema>>({
     resolver: zodResolver(ImageGenerationFormSchema),
@@ -105,8 +106,9 @@ const Configurations = () => {
   async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    const { error, success, data } = await generateImage(values);
-    console.log(error, success, data);
+    // const { error, success, data } = await generateImage(values);
+    // console.log(error, success, data);
+    await generateImage(values);
   }
   return (
     <TooltipProvider>
