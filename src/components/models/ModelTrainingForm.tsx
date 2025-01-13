@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useId } from 'react';
 
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +16,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { toast } from 'sonner';
+import { get } from 'http';
+import { getPresignedStorageUrl } from '@/app/actions/model-actions';
 
 const ACCEPTED_ZIP_FILES = ['application/x-zip-compressed', 'application/zip'];
 const MAX_FILE_SIZE = 45 * 1024 * 1024; // 45MB
@@ -40,6 +43,7 @@ const formSchema = z.object({
 });
 
 const ModelTrainingForm = () => {
+  const toastId = useId();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,9 +57,55 @@ const ModelTrainingForm = () => {
   const fileRef = form.register('zipFile');
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    toast.loading('Uploading file...', { id: toastId });
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    try {
+      const data = await getPresignedStorageUrl(values.zipFile[0].name);
+      console.log('data66', data);
+      if (data.error) {
+        toast.error(data.error || 'Failed to upload the file', { id: toastId });
+        return;
+      }
+      //uploading file
+      const urlResponse = await fetch(data.signedUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': values.zipFile[0].type,
+        },
+        body: values.zipFile[0],
+      });
+      if (!urlResponse.ok) {
+        throw new Error('Upload Failed');
+      }
+      const res = await urlResponse.json();
+      toast.success('File uploaded successfully', { id: toastId });
+      console.log('res84', res);
+
+      const formData = new FormData();
+      formData.append('fileKey', res.Key);
+      formData.append('modelName', values.modelName);
+      formData.append('gender', values.gender);
+
+      //use the /train handler
+      const response = await fetch('/api/train', {
+        method: 'POST',
+        body: formData,
+      });
+      const results = await response.json();
+      if (!response.ok) {
+        throw new Error(results?.error || 'Failed to train the model!');
+      }
+      toast.success(
+        'Training started successfully. You receive a notification once it gets completed!',
+        { id: toastId }
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to upload the file';
+      toast.error(errorMessage, { id: toastId, duration: 5000 });
+    }
     console.log(values);
   }
   return (
@@ -111,7 +161,7 @@ const ModelTrainingForm = () => {
           <FormField
             control={form.control}
             name="zipFile"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel>
                   Training Data (ZipFile) |{' '}
