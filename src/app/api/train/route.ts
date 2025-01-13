@@ -7,6 +7,9 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
+const WEBHOOK_URL =
+  process.env.SITE_URL ?? `https://dfef-194-53-197-67.ngrok-free.app`;
+
 export async function POST(request: NextRequest) {
   try {
     if (!process.env.REPLICATE_API_TOKEN) {
@@ -55,7 +58,7 @@ export async function POST(request: NextRequest) {
     });
 
     // start training
-    const training = replicate.trainings.create(
+    const training = await replicate.trainings.create(
       'ostris',
       'flux-dev-lora-trainer',
       'e440909d3512c31646ee2e0c7d6f6f4923224863a6a10c494606e79fb5844497',
@@ -68,10 +71,24 @@ export async function POST(request: NextRequest) {
           input_images: fileUrl.signedUrl,
           trigger_word: 'ohwx',
         },
+        webhook: `${WEBHOOK_URL}/api/webhooks/training`,
+        webhook_events_filter: ['completed'], // optional
       }
     );
+    // console.log(training);
 
-    console.log(training);
+    //add model values in the supabase
+    await supabaseAdmin.from('models').insert({
+      model_id: modelId,
+      user_id: user.id,
+      model_name: input.modelName,
+      gender: input.gender,
+      training_status: training.status,
+      trigger_word: 'ohwx',
+      training_steps: 1000,
+      training_id: training.id,
+    });
+
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     console.error('Training Error: ', error);
