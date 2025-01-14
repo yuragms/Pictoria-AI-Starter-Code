@@ -1,5 +1,6 @@
+'use client';
 import { Database } from '@datatypes.types';
-import React from 'react';
+import React, { useId } from 'react';
 import {
   Card,
   CardContent,
@@ -13,11 +14,24 @@ import { formatDistance } from 'date-fns';
 import {
   CheckCircle2,
   Clock,
-  Divide,
   Loader2,
+  Trash2,
   User2,
   XCircle,
 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
+import { deleteModel } from '@/app/actions/model-actions';
 
 type ModelType = {
   error: string | null;
@@ -30,7 +44,25 @@ interface ModelsListProps {
 }
 
 const ModelsList = ({ models }: ModelsListProps) => {
-  const { data, success, error } = models;
+  const { data } = models;
+
+  const toastId = useId();
+
+  const handleDeleteModel = async (
+    id: number,
+    model_id: string,
+    model_version: string
+  ) => {
+    toast.loading('Deleting model...', { id: toastId });
+    const { success, error } = await deleteModel(id, model_id, model_version);
+
+    if (error) {
+      toast.error(error, { id: toastId });
+    }
+    if (success) {
+      toast.success('Model deleted successfully', { id: toastId });
+    }
+  };
 
   if (data?.length === 0) {
     return (
@@ -61,24 +93,64 @@ const ModelsList = ({ models }: ModelsListProps) => {
             <div className="flex items-center justify-between">
               {' '}
               <CardTitle>{model.model_name}</CardTitle>
-              <div className="flex items-center gap-2">
-                {model.training_status === 'succeeded' ? (
-                  <div className="flex items-center gap-1 text-sm text-green-500">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span className="capitalize">Ready</span>
-                  </div>
-                ) : model.training_status === 'failed' ||
-                  model.training_status === 'canceled' ? (
-                  <div className="flex items-center gap-1 text-sm text-red-500">
-                    <XCircle className="w-4 h-4" />
-                    <span className="capitalize">{model.training_status}</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1 text-sm text-yellow-500">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="capitalize">Training</span>
-                  </div>
-                )}
+              <div className="flex items-center justify-center gap-2">
+                {' '}
+                <div className="flex items-center gap-2">
+                  {model.training_status === 'succeeded' ? (
+                    <div className="flex items-center gap-1 text-sm text-green-500">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span className="capitalize">Ready</span>
+                    </div>
+                  ) : model.training_status === 'failed' ||
+                    model.training_status === 'canceled' ? (
+                    <div className="flex items-center gap-1 text-sm text-red-500">
+                      <XCircle className="w-4 h-4" />
+                      <span className="capitalize">
+                        {model.training_status}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-sm text-yellow-500">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="capitalize">Training</span>
+                    </div>
+                  )}
+                </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant={'ghost'}
+                      size={'icon'}
+                      className="w-8 h-8 text-destructive/90 hover:text-destructive"
+                    >
+                      <Trash2 className="w-4 h4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Model</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this model? This action
+                        cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() =>
+                          handleDeleteModel(
+                            model.id,
+                            model.model_id || '',
+                            model.version || ''
+                          )
+                        }
+                        className="bg-destructive hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
             <CardDescription>
