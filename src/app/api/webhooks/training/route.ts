@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import Replicate from 'replicate';
 import crypto from 'crypto';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { Resend } from 'resend';
+import { EmailTemplate } from '@/components/email-templates/EmailTemplate';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -50,9 +54,19 @@ export async function POST(req: Request) {
     }
 
     const userEmail = user.user.email ?? '';
-    const username = user.user.user_metadata.full_name ?? '';
+    const userName = user.user.user_metadata.full_name ?? '';
     if (body.status === 'succeeded') {
       // send a successful status email
+      await resend.emails.send({
+        from: 'Pectoria AI <admin@resend.dev>',
+        to: [userEmail],
+        subject: 'Model Training completed',
+        react: EmailTemplate({
+          userName,
+          message: 'Your model training has been completed!',
+        }),
+      });
+
       //Update the supabase models table
     } else {
       // handle the failed and the canceled status
