@@ -8,7 +8,8 @@ const replicate = new Replicate({
 });
 
 const WEBHOOK_URL =
-  process.env.SITE_URL ?? `https://dfef-194-53-197-67.ngrok-free.app`;
+  //   process.env.SITE_URL ?? `https://dfef-194-53-197-67.ngrok-free.app`;
+  process.env.SITE_URL ?? `https://4699-194-53-197-67.ngrok-free.app`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
         webhook: `${WEBHOOK_URL}/api/webhooks/training?userId=${
           user.id
         }&modelName=${encodeURIComponent(
-          modelId
+          input.modelName
         )}&fileName=${encodeURIComponent(fileName)}`,
         webhook_events_filter: ['completed'], // optional
       }

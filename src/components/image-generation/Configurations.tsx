@@ -30,6 +30,7 @@ import {
 } from '../ui/tooltip';
 import { Info } from 'lucide-react';
 import useGeneratedStore from '@/store/useGeneratedStore';
+import { Tables } from '@datatypes.types';
 
 export const ImageGenerationFormSchema = z.object({
   model: z.string({
@@ -63,11 +64,16 @@ export const ImageGenerationFormSchema = z.object({
     }),
 });
 
+interface ConfigurationsProps {
+  userModels: Tables<'models'>[];
+  model_id?: string;
+}
+
 // const formSchema = z.object({
 //   username: z.string().min(2).max(50),
 // });
 
-const Configurations = () => {
+const Configurations = ({ userModels, model_id }: ConfigurationsProps) => {
   const generateImage = useGeneratedStore((state) => state.generateImage);
   // 1. Define your form.
   const form = useForm<z.infer<typeof ImageGenerationFormSchema>>({

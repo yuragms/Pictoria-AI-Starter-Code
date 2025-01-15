@@ -15,6 +15,7 @@ export async function POST(req: Request) {
   console.log('Webhok is working', req);
   try {
     const body = await req.json();
+    console.log(body);
     const url = new URL(req.url);
 
     const userId = url.searchParams.get('userId') ?? '';
@@ -68,12 +69,46 @@ export async function POST(req: Request) {
       });
 
       //Update the supabase models table
+      await supabaseAdmin
+        .from('models')
+        .update({
+          training_status: body.status,
+          trainging_time: body.metrics?.total_time ?? null,
+          version: body.output?.version.split(':')[1] ?? null,
+        })
+        .eq('user_id', userId)
+        .eq('model_name', modelName);
+
+      //delete the training data from ssupabase storage
+      // supabaseAdmin.storage
+      //   .from('training_data')
+      //   .remove([`${userId}/${fileName}`]);
     } else {
       // handle the failed and the canceled status
-    }
-    console.log('Webhook is working fine', body);
+      await resend.emails.send({
+        from: 'Pectoria AI <admin@resend.dev>',
+        to: [userEmail],
+        subject: `Model Training ${body.status}`,
+        react: EmailTemplate({
+          userName,
+          message: `Your model training has been ${body.status}!`,
+        }),
+      });
 
-    return NextResponse.json({ success: true }, { status: 201 });
+      //Update the supabase models table
+      await supabaseAdmin
+        .from('models')
+        .update({
+          training_status: body.status,
+        })
+        .eq('user_id', userId)
+        .eq('model_name', modelName);
+
+      //delete the training data from supabase storage
+      await supabaseAdmin.storage.from('training_data').remove([`${fileName}`]);
+    }
+
+    return new NextResponse('OK', { status: 200 });
   } catch (error) {
     console.log('WEbhook processing error:', error);
     return new NextResponse('Intternal server error', { status: 500 });

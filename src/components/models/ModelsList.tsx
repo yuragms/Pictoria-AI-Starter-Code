@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import { formatDistance } from 'date-fns';
 import {
+  ArrowRight,
   CheckCircle2,
   Clock,
   Loader2,
@@ -32,6 +33,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { deleteModel } from '@/app/actions/model-actions';
+import { cn } from '@/lib/utils';
 
 type ModelType = {
   error: string | null;
@@ -45,6 +47,7 @@ interface ModelsListProps {
 
 const ModelsList = ({ models }: ModelsListProps) => {
   const { data } = models;
+  console.log(models);
 
   const toastId = useId();
 
@@ -96,7 +99,8 @@ const ModelsList = ({ models }: ModelsListProps) => {
               <div className="flex items-center justify-center gap-2">
                 {' '}
                 <div className="flex items-center gap-2">
-                  {model.training_status === 'succeeded' ? (
+                  {model.training_status === 'succeeded' ||
+                  model.training_status === 'starting' ? (
                     <div className="flex items-center gap-1 text-sm text-green-500">
                       <CheckCircle2 className="w-4 h-4" />
                       <span className="capitalize">Ready</span>
@@ -185,6 +189,33 @@ const ModelsList = ({ models }: ModelsListProps) => {
                 </div>
               </div>
             </CardContent>
+            <div className="pt-4">
+              <Link
+                href={
+                  //   model.training_status === 'succeeded'
+                  model.training_status === 'starting'
+                    ? `/image-generation?model_id=${model.model_id}:${model.version}`
+                    : '#'
+                }
+                className={cn(
+                  'inline-flex w-full group',
+                  //   model.training_status !== 'succeeded' &&
+                  model.training_status !== 'starting' &&
+                    'pointer-events-none opacity-50'
+                )}
+              >
+                <Button
+                  className="w-full group-hover:bg-primary/90"
+                  disabled={
+                    //   model.training_status !== 'succeeded'
+                    model.training_status !== 'starting'
+                  }
+                >
+                  Generate Images
+                </Button>
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
+            </div>
           </CardHeader>
         </Card>
       ))}
