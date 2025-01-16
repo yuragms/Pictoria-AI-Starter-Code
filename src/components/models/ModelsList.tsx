@@ -99,8 +99,8 @@ const ModelsList = ({ models }: ModelsListProps) => {
               <div className="flex items-center justify-center gap-2">
                 {' '}
                 <div className="flex items-center gap-2">
-                  {model.training_status === 'succeeded' ||
-                  model.training_status === 'starting' ? (
+                  {model.training_status === 'succeeded' ? (
+                    //   || model.training_status === 'starting'
                     <div className="flex items-center gap-1 text-sm text-green-500">
                       <CheckCircle2 className="w-4 h-4" />
                       <span className="capitalize">Ready</span>
@@ -192,23 +192,23 @@ const ModelsList = ({ models }: ModelsListProps) => {
             <div className="pt-4">
               <Link
                 href={
-                  //   model.training_status === 'succeeded'
-                  model.training_status === 'starting'
-                    ? `/image-generation?model_id=${model.model_id}:${model.version}`
+                  model.training_status === 'succeeded'
+                    ? //   model.training_status === 'starting'
+                      `/image-generation?model_id=${model.model_id}:${model.version}`
                     : '#'
                 }
                 className={cn(
                   'inline-flex w-full group',
-                  //   model.training_status !== 'succeeded' &&
-                  model.training_status !== 'starting' &&
+                  model.training_status !== 'succeeded' &&
+                    //   model.training_status !== 'starting' &&
                     'pointer-events-none opacity-50'
                 )}
               >
                 <Button
                   className="w-full group-hover:bg-primary/90"
                   disabled={
-                    //   model.training_status !== 'succeeded'
-                    model.training_status !== 'starting'
+                    model.training_status !== 'succeeded'
+                    // model.training_status !== 'starting'
                   }
                 >
                   Generate Images

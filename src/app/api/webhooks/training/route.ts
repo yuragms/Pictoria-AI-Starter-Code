@@ -15,7 +15,6 @@ export async function POST(req: Request) {
   console.log('Webhok is working', req);
   try {
     const body = await req.json();
-    console.log(body);
     const url = new URL(req.url);
 
     const userId = url.searchParams.get('userId') ?? '';
@@ -57,6 +56,7 @@ export async function POST(req: Request) {
     const userEmail = user.user.email ?? '';
     const userName = user.user.user_metadata.full_name ?? '';
     if (body.status === 'succeeded') {
+      console.log('body-status-succeeded', body);
       // send a successful status email
       await resend.emails.send({
         from: 'Pectoria AI <admin@resend.dev>',
@@ -73,17 +73,18 @@ export async function POST(req: Request) {
         .from('models')
         .update({
           training_status: body.status,
-          trainging_time: body.metrics?.total_time ?? null,
+          training_time: body.metrics?.total_time ?? null,
           version: body.output?.version.split(':')[1] ?? null,
         })
         .eq('user_id', userId)
         .eq('model_name', modelName);
 
-      //delete the training data from ssupabase storage
+      //delete the training data from supabase storage
       // supabaseAdmin.storage
       //   .from('training_data')
       //   .remove([`${userId}/${fileName}`]);
     } else {
+      console.log('body-status-nosucceeded', body);
       // handle the failed and the canceled status
       await resend.emails.send({
         from: 'Pectoria AI <admin@resend.dev>',
@@ -103,14 +104,12 @@ export async function POST(req: Request) {
         })
         .eq('user_id', userId)
         .eq('model_name', modelName);
-
-      //delete the training data from supabase storage
-      await supabaseAdmin.storage.from('training_data').remove([`${fileName}`]);
     }
-
+    //delete the training data from supabase storage
+    await supabaseAdmin.storage.from('training_data').remove([`${fileName}`]);
     return new NextResponse('OK', { status: 200 });
   } catch (error) {
     console.log('WEbhook processing error:', error);
-    return new NextResponse('Intternal server error', { status: 500 });
+    return new NextResponse('Internal server error', { status: 500 });
   }
 }
