@@ -75,12 +75,14 @@ const ImageDialog = ({ image, onClose }: ImageDialogProps) => {
             <div className="flex flex-wrap gap-3 mb-32">
               <Badge
                 variant={'secondary'}
-                className="rounded-full border border-primary/30 px-4 py-2 text-sm font-normal"
+                className="rounded-full border border-primary/30 px-4 py-2 text-sm font-normal max-w-[80%]"
               >
                 <span className="text-primary uppercase mr-2 font-semibold">
                   Model ID:
                 </span>
-                {image.model}
+                {image.model?.startsWith('yuragms/')
+                  ? image.model.split('/')[1].split(':')[0]
+                  : image.model}
               </Badge>
               <Badge
                 variant={'secondary'}
