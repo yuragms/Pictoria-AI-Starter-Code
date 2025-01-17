@@ -76,10 +76,12 @@ interface ConfigurationsProps {
 const Configurations = ({ userModels, model_id }: ConfigurationsProps) => {
   const generateImage = useGeneratedStore((state) => state.generateImage);
   // 1. Define your form.
+  console.log('console.log(model_id)', model_id);
   const form = useForm<z.infer<typeof ImageGenerationFormSchema>>({
     resolver: zodResolver(ImageGenerationFormSchema),
+
     defaultValues: {
-      model: 'black-forest-labs/flux-dev',
+      model: model_id ? `yuragms/${model_id}` : 'black-forest-labs/flux-dev',
       prompt: '',
       guidance: 3.5,
       num_outputs: 1,
@@ -112,9 +114,24 @@ const Configurations = ({ userModels, model_id }: ConfigurationsProps) => {
   async function onSubmit(values: z.infer<typeof ImageGenerationFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    const newValues = {
+      ...values,
+      prompt: values.model.startsWith('yuragms/')
+        ? (() => {
+            const modelId = values.model.replace('yuragms', '').split(':')[0];
+            const selectedModel = userModels.find(
+              (model) => model.model_id === modelId
+            );
+
+            return `photo of a ${selectedModel?.trigger_word || 'ohwx'} ${
+              selectedModel?.gender
+            }, ${values.prompt}`;
+          })()
+        : values.prompt,
+    };
     // const { error, success, data } = await generateImage(values);
     // console.log(error, success, data);
-    await generateImage(values);
+    await generateImage(newValues);
   }
   return (
     <TooltipProvider>
@@ -154,6 +171,17 @@ const Configurations = ({ userModels, model_id }: ConfigurationsProps) => {
                       <SelectItem value="black-forest-labs/flux-schnell">
                         Flux Scnell
                       </SelectItem>
+                      {userModels?.map(
+                        (model) =>
+                          model.training_status === 'succeeded' && (
+                            <SelectItem
+                              key={model.id}
+                              value={`yuragms/${model.model_id}:${model.version}`}
+                            >
+                              {model.model_name}
+                            </SelectItem>
+                          )
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />

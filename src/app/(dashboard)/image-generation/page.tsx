@@ -14,6 +14,8 @@ const ImageGeneration = async ({
 }) => {
   const model_id = (await searchParams).model_id;
   const { data: userModels } = await fetchModels();
+
+  console.log(model_id);
   return (
     <section className="container mx-auto px-6 grid gap-4 grid-cols-3 overflow-hidden">
       <Configurations userModels={userModels || []} model_id={model_id} />
