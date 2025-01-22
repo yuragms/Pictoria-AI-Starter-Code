@@ -1,7 +1,15 @@
 import Pricing from '@/components/landing-page/pricing';
+import { getProducts, getUser } from '@/lib/supabase/queries';
+import { createClient } from '@/lib/supabase/server';
 import Image from 'next/image';
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+
+  const [user, products] = await Promise.all([
+    getUser(supabase), //gets the currentlly authenicated users
+    getProducts(supabase), //gets all the active products with their prices
+  ]);
   return (
     // <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
     //   <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">

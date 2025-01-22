@@ -1,9 +1,12 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import AnimatedGradientText from '../ui/animated-gradient-text';
 import { cn } from '@/lib/utils';
 import { Label } from '../ui/label';
+import { Switch } from '../ui/switch';
 
 const Pricing = () => {
+  const [billingInterval, setBillingInterval] = useState('month');
   return (
     <section className="w-full bg-muted flex flex-col items-center justify-center">
       <div className="w-full container mx-auto py-32 flex flex-col items-center justify-center space-y-8">
@@ -27,8 +30,20 @@ const Pricing = () => {
             engaging your audience, creating customer loyalty and driving sales.
           </p>
         </div>
-        <div>
-          <Label>Monthly</Label>
+        <div className="flex justify-center items-center space-x-4 py-8">
+          <Label htmlFor="pricing-switch" className="font-semibold text-base">
+            Monthly
+          </Label>
+          <Switch
+            id="pricing-switch"
+            checked={billingInterval === 'year'}
+            onCheckedChange={(checked) =>
+              setBillingInterval(checked ? 'year' : 'month')
+            }
+          />
+          <Label htmlFor="pricing-switch" className="font-semibold text-base">
+            Yearly
+          </Label>
         </div>
       </div>
     </section>
