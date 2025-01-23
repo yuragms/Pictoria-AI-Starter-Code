@@ -4,9 +4,22 @@ import AnimatedGradientText from '../ui/animated-gradient-text';
 import { cn } from '@/lib/utils';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
+import { Tables } from '@datatypes.types';
 
-const Pricing = () => {
+type Product = Tables<'products'>;
+type Price = Tables<'prices'>;
+
+interface ProductWithPrices extends Product {
+  prices: Price[];
+}
+
+interface PricingProps {
+  products: ProductWithPrices[];
+}
+
+const Pricing = ({ products }: PricingProps) => {
   const [billingInterval, setBillingInterval] = useState('month');
+  console.log(products);
   return (
     <section className="w-full bg-muted flex flex-col items-center justify-center">
       <div className="w-full container mx-auto py-32 flex flex-col items-center justify-center space-y-8">

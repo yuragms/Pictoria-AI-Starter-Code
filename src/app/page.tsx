@@ -2,6 +2,7 @@ import Pricing from '@/components/landing-page/pricing';
 import { getProducts, getUser } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/server';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 
 export default async function Home() {
   const supabase = await createClient();
@@ -10,6 +11,10 @@ export default async function Home() {
     getUser(supabase), //gets the currentlly authenicated users
     getProducts(supabase), //gets all the active products with their prices
   ]);
+
+  // if (user) {
+  //   return redirect('/dashboard');
+  // }
   return (
     // <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
     //   <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -106,8 +111,9 @@ export default async function Home() {
     //     </a>
     //   </footer>
     // </div>
+
     <main className="flex flex-col min-h-screen items-center justify-center">
-      <Pricing />
+      <Pricing products={products ?? []} />
     </main>
   );
 }
