@@ -5,6 +5,10 @@ import { cn } from '@/lib/utils';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import { Tables } from '@datatypes.types';
+import { Badge } from '../ui/badge';
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import { Check } from 'lucide-react';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
@@ -15,9 +19,10 @@ interface ProductWithPrices extends Product {
 
 interface PricingProps {
   products: ProductWithPrices[];
+  mostPopularProduct?: string;
 }
 
-const Pricing = ({ products }: PricingProps) => {
+const Pricing = ({ products, mostPopularProduct = 'pro' }: PricingProps) => {
   const [billingInterval, setBillingInterval] = useState('month');
   console.log(products);
   return (
@@ -57,6 +62,83 @@ const Pricing = ({ products }: PricingProps) => {
           <Label htmlFor="pricing-switch" className="font-semibold text-base">
             Yearly
           </Label>
+        </div>
+        <div className="grid grid-cols-3 place-items-center mx-auto gap-8">
+          {products.map((product) => {
+            const price = product?.prices?.find(
+              (price) => price.interval === billingInterval
+            );
+
+            if (!price) return null;
+
+            const priceString = new Intl.NumberFormat('en-Us', {
+              style: 'currency',
+              currency: price.currency!,
+              minimumFractionDigits: 0,
+            }).format((price?.unit_amount || 0) / 100);
+
+            return (
+              <div
+                key={product.id}
+                className="border bg-background rounded-xl shadow-sm h-fit divide-y divide-border border-border"
+              >
+                <div className="p-6">
+                  <h2 className="text-2xl leading-6 font-semibold text-foreground flex items-center justify-between">
+                    {product.name}
+                    {product.name?.toLowerCase() ===
+                    mostPopularProduct.toLowerCase() ? (
+                      <Badge className="border-border font-semibold">
+                        Most Popular
+                      </Badge>
+                    ) : null}
+                  </h2>
+                  <p className="text-muted-foreground mt-4 text-sm">
+                    {product.description}
+                  </p>
+                  <p className="mt-8">
+                    <span className="text-4xl font-extrabold text-foreground">
+                      {priceString}
+                    </span>
+                    <span className="text-base font-medium text-muted-foreground">
+                      /{billingInterval}
+                    </span>
+                  </p>
+                  <Link href="/login?state=signup">
+                    <Button
+                      className="mt-8 w-full font-semibold"
+                      variant={
+                        product.name?.toLowerCase() ===
+                        mostPopularProduct.toLocaleLowerCase()
+                          ? 'default'
+                          : 'secondary'
+                      }
+                    >
+                      Subscribe
+                    </Button>
+                  </Link>
+                </div>
+                <div className="pt-6 pb-8 px-6">
+                  <h3 className="uppercase tracking-wide text-foreground font-medium text-sm">
+                    What&apos;s included
+                  </h3>
+                  <ul className="mt-6 space-y-4">
+                    {Object.values(product.metadata || {}).map(
+                      (feature, index) => {
+                        if (feature) {
+                          return (
+                            <li key={index} className="flex space-x-3">
+                              <Check className="w-5 h-5 text-primary" />
+                              <span>{feature}</span>
+                            </li>
+                          );
+                        }
+                      }
+                    )}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
