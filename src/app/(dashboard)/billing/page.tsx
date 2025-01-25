@@ -1,6 +1,20 @@
+import PlanSummary from '@/components/billing/PlanSummary';
+import { getProducts, getSubscription, getUser } from '@/lib/supabase/queries';
+import { createClient } from '@supabase/supabase-js';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
-const BillingPage = () => {
+const BillingPage = async () => {
+  const supabase = await createClient();
+  const [user, products, subscription] = await Promise.all([
+    getUser(supabase), //gets the currentlly authenicated users
+    getProducts(supabase), //gets all the active products with their prices
+    getSubscription(supabase),
+  ]);
+
+  if (!user) {
+    return redirect('/login');
+  }
   return (
     <section className="container mx-auto space-y-8">
       <div>
@@ -9,7 +23,13 @@ const BillingPage = () => {
           Manage your subscription and billing information
         </p>
       </div>
-      BillingPage
+      <div className="grid gap-10">
+        <PlanSummary
+          subscription={subscription}
+          user={user}
+          products={products || []}
+        />
+      </div>
     </section>
   );
 };

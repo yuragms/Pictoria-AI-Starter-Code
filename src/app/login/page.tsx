@@ -4,7 +4,17 @@ import React from 'react';
 import Logo from '@/components/Logo';
 import AuthForm from '@/components/authentication/AuthForm';
 
-const AuthemticationPage = () => {
+interface SearchParams {
+  state?: string;
+}
+
+const AuthemticationPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) => {
+  const { state } = await searchParams;
+  console.log(state);
   return (
     <main className="h-screen grid grid-cols-2 relative">
       <div className="relative w-full flex flex-col bg-muted p-10 text-primary-foreground">
@@ -32,7 +42,7 @@ const AuthemticationPage = () => {
       </div>
       <div className="relative flex flex-col items-center justify-center p-8 h-full  w-full">
         <div className="w-[350px] mx-auto max-w-xl">
-          <AuthForm />
+          <AuthForm state={state ?? 'login'} />
         </div>
       </div>
     </main>

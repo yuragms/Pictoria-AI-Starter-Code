@@ -80,7 +80,13 @@ const Pricing = ({ products, mostPopularProduct = 'pro' }: PricingProps) => {
             return (
               <div
                 key={product.id}
-                className="border bg-background rounded-xl shadow-sm h-fit divide-y divide-border border-border"
+                className={cn(
+                  'border bg-background rounded-xl shadow-sm h-fit divide-y divide-border border-border',
+                  product.name?.toLowerCase() ===
+                    mostPopularProduct.toLowerCase()
+                    ? 'border-primary bg-background drop-shadow-md scale-105'
+                    : 'border-border'
+                )}
               >
                 <div className="p-6">
                   <h2 className="text-2xl leading-6 font-semibold text-foreground flex items-center justify-between">
@@ -128,7 +134,9 @@ const Pricing = ({ products, mostPopularProduct = 'pro' }: PricingProps) => {
                           return (
                             <li key={index} className="flex space-x-3">
                               <Check className="w-5 h-5 text-primary" />
-                              <span>{feature}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {feature}
+                              </span>
                             </li>
                           );
                         }

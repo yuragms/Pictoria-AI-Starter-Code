@@ -24,7 +24,8 @@ export const getProducts = cache(async (supabase: SupabaseClient) => {
     .select('*, prices(*)')
     .eq('active', true)
     .eq('prices.active', true)
-    .order('metadata->index')
+    // .order('metadata->index')
+    .order('id')
     .order('unit_amount', { referencedTable: 'prices' });
 
   return products;
