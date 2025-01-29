@@ -1,6 +1,7 @@
 import PlanSummary from '@/components/billing/PlanSummary';
 import { getProducts, getSubscription, getUser } from '@/lib/supabase/queries';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
+
 import { redirect } from 'next/navigation';
 import React from 'react';
 
