@@ -9,6 +9,10 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import PricingSheet from './PricingSheet';
 import { User } from '@supabase/supabase-js';
+import { usePathname, useRouter } from 'next/navigation';
+import { checkoutWithStripe } from '@/lib/stripe/server';
+import { getErrorRedirect } from '@/lib/helpers';
+import { getStripe } from '@/lib/stripe/client';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
@@ -83,11 +87,35 @@ const Pricing = ({
   subscription,
 }: PricingProps) => {
   const [billingInterval, setBillingInterval] = useState('month');
+  const router = useRouter();
+  const currentPath = usePathname();
   console.log(subscription, products);
 
   const handleStripeCheckout = async (price: Price) => {
-    console.log('Handle stripe checkout function', price);
-    return 'stripe checkout function';
+    // console.log('Handle stripe checkout function', price);
+
+    if (!user) {
+      return router.push('/login');
+    }
+
+    const { errorRedirect, sessionId } = await checkoutWithStripe(
+      price,
+      currentPath
+    );
+    if (errorRedirect) {
+      return router.push(errorRedirect);
+    }
+    if (!sessionId) {
+      return router.push(
+        getErrorRedirect(
+          currentPath,
+          'An unknown error occured',
+          'Please try again later or contact us.'
+        )
+      );
+    }
+    const stripe = await getStripe();
+    stripe?.redirectToCheckout({ sessionId });
   };
   const handleStripePortalRequest = async () => {
     return 'stripe checkout function';
