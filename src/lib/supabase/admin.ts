@@ -286,9 +286,18 @@ const manageSubscriptionStatusChange = async (
       subscription.default_payment_method as Stripe.PaymentMethod
     );
 };
+const updateUserCredits = async (userId: string, metadata: json) => {
+  const creditsData: TablesInsert<'credits'> = {
+    image_generation_count: metadata.image_generation_count ?? 0,
+    model_training_count: metadata.model_training_count ?? 0,
+    max_image_generation_count: metadata.image_generation_count ?? 0,
+    max_model_training_count: metadata.model_training_count ?? 0,
+  };
+};
 
 export {
   upsertProductRecord,
+  updateUserCredits,
   upsertPriceRecord,
   deleteProductRecord,
   deletePriceRecord,

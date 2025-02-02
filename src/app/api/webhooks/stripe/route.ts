@@ -73,6 +73,7 @@ export async function POST(req: Request) {
               checkoutSession.customer as string,
               true
             );
+            //update credits
           }
           break;
         default:

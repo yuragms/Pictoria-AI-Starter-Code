@@ -5,14 +5,12 @@ import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import { Tables } from '@datatypes.types';
 import { Badge } from '../ui/badge';
-import Link from 'next/link';
 import { Button } from '../ui/button';
-import PricingSheet from './PricingSheet';
 import { User } from '@supabase/supabase-js';
 import { usePathname, useRouter } from 'next/navigation';
-import { checkoutWithStripe } from '@/lib/stripe/server';
 import { getErrorRedirect } from '@/lib/helpers';
 import { getStripe } from '@/lib/stripe/client';
+import { checkoutWithStripe } from '@/lib/stripe/server';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
@@ -66,8 +64,7 @@ const renderPricingButton = ({
       <Button
         className="mt-8 w-full font-semibold"
         variant={
-          product.name?.toLocaleLowerCase() ===
-          mostPopularProduct.toLocaleLowerCase()
+          product.name?.toLowerCase() === mostPopularProduct.toLowerCase()
             ? 'default'
             : 'secondary'
         }
@@ -106,6 +103,7 @@ const Pricing = ({
       return router.push(errorRedirect);
     }
     if (!sessionId) {
+      console.log('no sessionID');
       return router.push(
         getErrorRedirect(
           currentPath,

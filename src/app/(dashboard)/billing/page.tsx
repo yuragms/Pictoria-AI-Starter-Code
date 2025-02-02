@@ -12,6 +12,9 @@ const BillingPage = async () => {
     getProducts(supabase), //gets all the active products with their prices
     getSubscription(supabase),
   ]);
+  // console.log('user', user);
+  // console.log('products', products);
+  // console.log('subscription', subscription);
 
   if (!user) {
     return redirect('/login');

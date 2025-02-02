@@ -1,4 +1,4 @@
-import Pricing from '@/components/landing-page/pricing';
+import Pricing from '@/components/landing-page/Pricing';
 import { getProducts, getUser } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/server';
 import Image from 'next/image';
