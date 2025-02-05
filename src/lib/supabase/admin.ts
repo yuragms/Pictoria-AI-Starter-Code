@@ -293,6 +293,15 @@ const updateUserCredits = async (userId: string, metadata: json) => {
     max_image_generation_count: metadata.image_generation_count ?? 0,
     max_model_training_count: metadata.model_training_count ?? 0,
   };
+  const { error: upsertError } = await supabaseAdmin
+    .from('credits')
+    .update(creditsData)
+    .eq('user_id', userId);
+
+  if (upsertError) {
+    throw new Error(`Credits update failed: ${upsertError.message}`);
+  }
+  console.log('Updated credits for the user', userId);
 };
 
 export {
