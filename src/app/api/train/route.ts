@@ -10,9 +10,10 @@ const replicate = new Replicate({
 const WEBHOOK_URL =
   //   process.env.SITE_URL ?? `https://dfef-194-53-197-67.ngrok-free.app`;
   // process.env.SITE_URL ?? `https://4699-194-53-197-67.ngrok-free.app`;
-  process.env.SITE_URL ?? `https://9460-194-53-197-67.ngrok-free.app`;
+  // process.env.SITE_URL ?? `https://9460-194-53-197-67.ngrok-free.app`;
+  process.env.SITE_URL ?? `https://13bf-194-53-197-67.ngrok-free.app`;
 
-export async function POST(request: NextRequest) {
+https: export async function POST(request: NextRequest) {
   try {
     if (!process.env.REPLICATE_API_TOKEN) {
       throw new Error('The replicate api token is not set!');

@@ -2,7 +2,7 @@ import { toDateTime } from '@/lib/helpers';
 import { stripe } from '@/lib/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
-import type { Tables, TablesInsert } from '@datatypes.types';
+import type { Json, Tables, TablesInsert } from '@datatypes.types';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
@@ -47,6 +47,7 @@ const upsertPriceRecord = async (
     interval: price.recurring?.interval ?? null,
     interval_count: price.recurring?.interval_count ?? null,
     trial_period_days: price.recurring?.trial_period_days ?? TRIAL_PERIOD_DAYS,
+    metadata: price.metadata ?? null,
     // description: price.nickname ?? null, // Добавляем это
     // metadata: price.metadata ?? {}, // Добавляем это
   };
@@ -286,16 +287,23 @@ const manageSubscriptionStatusChange = async (
       subscription.default_payment_method as Stripe.PaymentMethod
     );
 };
-const updateUserCredits = async (userId: string, metadata: json) => {
+const updateUserCredits = async (userId: string, metadata: Json) => {
   const creditsData: TablesInsert<'credits'> = {
-    image_generation_count: metadata.image_generation_count ?? 0,
-    model_training_count: metadata.model_training_count ?? 0,
-    max_image_generation_count: metadata.image_generation_count ?? 0,
-    max_model_training_count: metadata.model_training_count ?? 0,
+    user_id: userId,
+    image_generation_count:
+      (metadata as { image_generation_count?: number })
+        .image_generation_count ?? 0,
+    model_training_count:
+      (metadata as { model_training_count?: number }).model_training_count ?? 0,
+    max_image_generation_count:
+      (metadata as { image_generation_count?: number })
+        .image_generation_count ?? 0,
+    max_model_training_count:
+      (metadata as { model_training_count?: number }).model_training_count ?? 0,
   };
   const { error: upsertError } = await supabaseAdmin
     .from('credits')
-    .update(creditsData)
+    .upsert(creditsData)
     .eq('user_id', userId);
 
   if (upsertError) {

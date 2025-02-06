@@ -25,10 +25,16 @@ interface PlanSummaryProps {
   subscription: SubscriptionWithProduct | null;
   user: User | null;
   products: ProductWithPrices[] | null;
+  credits: Tables<'credits'> | null;
 }
 
-const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
-  if (!subscription || subscription.status !== 'active') {
+const PlanSummary = ({
+  credits,
+  subscription,
+  user,
+  products,
+}: PlanSummaryProps) => {
+  if (!credits || !subscription || subscription.status !== 'active') {
     return (
       <Card className="max-w-5xl">
         <CardContent className="px-5 py-4">
@@ -91,6 +97,12 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
     currency: currency!,
     minimumFractionDigits: 0,
   }).format((unit_amount || 0) / 100);
+
+  const imageGenCount = credits.image_generation_count ?? 0;
+  const modelTrainCount = credits.model_training_count ?? 0;
+  const maxImageGenCount = credits.max_image_generation_count ?? 0;
+  const maxModelTrainCount = credits.max_model_training_count ?? 0;
+
   return (
     <Card className="max-w-5xl">
       <CardContent className="px-5 py-4">
@@ -132,7 +144,10 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
             </div>
             <div className="flex flex-col pb-0">
               <div className="text-sm font-normal">Included Credits</div>
-              <div className="flex-1 pt-1 text-sm font-medium">0 credits</div>
+              <div className="flex-1 pt-1 text-sm font-medium">
+                {' '}
+                {maxImageGenCount}
+              </div>
             </div>
             <div className="flex flex-col pb-0">
               <div className="text-sm font-normal">Renewal Date</div>

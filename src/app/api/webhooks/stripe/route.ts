@@ -6,6 +6,7 @@ import {
   manageSubscriptionStatusChange,
   deleteProductRecord,
   deletePriceRecord,
+  updateUserCredits,
 } from '@/lib/supabase/admin';
 
 const relevantEvents = new Set([
@@ -74,6 +75,15 @@ export async function POST(req: Request) {
               true
             );
             //update credits
+          }
+          if (
+            checkoutSession.status === 'complete' &&
+            checkoutSession.payment_status === 'paid'
+          ) {
+            await updateUserCredits(
+              checkoutSession.client_reference_id as string,
+              checkoutSession.metadata
+            );
           }
           break;
         default:

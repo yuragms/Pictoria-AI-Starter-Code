@@ -1,3 +1,4 @@
+import { getCredits } from '@/app/actions/credit-actions';
 import PlanSummary from '@/components/billing/PlanSummary';
 import { getProducts, getSubscription, getUser } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/server';
@@ -19,6 +20,8 @@ const BillingPage = async () => {
   if (!user) {
     return redirect('/login');
   }
+
+  const { data: credits } = await getCredits();
   return (
     <section className="container mx-auto space-y-8">
       <div>
