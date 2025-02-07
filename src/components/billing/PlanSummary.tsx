@@ -48,7 +48,7 @@ const PlanSummary = ({
             <div className="col-span-5 flex flex-col pr-12">
               <div className="flex-1 text-sm font-normal flex w-full justify-between pb-1">
                 <span className="font-normal text-muted-foreground ml-1 lowercase">
-                  Image Generation credits left
+                  Image generation credits
                 </span>
                 <span className="font-medium">0 remaing</span>
               </div>
@@ -85,7 +85,8 @@ const PlanSummary = ({
     );
   }
 
-  console.log(subscription);
+  console.log('subscription', subscription);
+  console.log('credts', credits);
 
   const {
     products: subscriptionProduct,
@@ -115,24 +116,34 @@ const PlanSummary = ({
         <div className="grid grid-cols-8 gap-4">
           <div className="col-span-5 flex flex-col pr-12">
             <div className="flex-1 text-sm font-normal flex w-full justify-between pb-1">
-              <span className="font-normal text-muted-foreground ml-1 lowercase">
-                Image Generation credits left
+              <span className="font-semibold text-base">
+                {imageGenCount} /{maxImageGenCount}{' '}
               </span>
-              <span className="font-medium">0 remaing</span>
+              <span className="font-normal text-muted-foreground ml-1 lowercase">
+                image generation credits
+              </span>
             </div>
             <div className="mb-1 flex items-end">
-              <Progress value={0} className="w-full h-2" />
+              <Progress
+                value={(imageGenCount / maxImageGenCount) * 100}
+                className="w-full h-2"
+              />
             </div>
           </div>
           <div className="col-span-5 flex flex-col pr-12">
             <div className="flex-1 text-sm font-normal flex w-full justify-between pb-1">
-              <span className="font-normal text-muted-foreground ml-1 lowercase">
-                model training credits left
+              <span className="font-semibold text-base">
+                {modelTrainCount} /{maxModelTrainCount}{' '}
               </span>
-              <span className="font-medium">0 remaing</span>
+              <span className="font-normal text-muted-foreground ml-1 lowercase">
+                model training credits
+              </span>
             </div>
             <div className="mb-1 flex items-end">
-              <Progress value={0} className="w-full h-2" />
+              <Progress
+                value={(modelTrainCount / maxModelTrainCount) * 100}
+                className="w-full h-2"
+              />
             </div>
           </div>
           <div className="col-span-3 flex flex-row justify-between flex-wrap">

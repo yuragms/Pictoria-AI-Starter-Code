@@ -35,6 +35,7 @@ const BillingPage = async () => {
           subscription={subscription}
           user={user}
           products={products || []}
+          credits={credits}
         />
       </div>
     </section>
