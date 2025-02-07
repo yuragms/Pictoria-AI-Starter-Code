@@ -31,7 +31,7 @@ interface PricingProps {
   subscription: SubscriptionWithProduct | null;
   user: User | null;
   products: ProductWithPrices[] | null;
-  mostPopularProduct: string;
+  mostPopularProduct?: string;
 }
 
 const renderPricingButton = ({

@@ -92,7 +92,7 @@ const PlanSummary = ({
     products: subscriptionProduct,
     unit_amount,
     currency,
-  } = subscription?.prices;
+  } = subscription?.prices ?? {};
   const priceString = new Intl.NumberFormat('en-Us', {
     style: 'currency',
     currency: currency!,
@@ -106,7 +106,7 @@ const PlanSummary = ({
 
   return (
     <Card className="max-w-5xl">
-      <CardContent className="px-5 py-4">
+      <CardContent className="px-5 py-4 pb-8">
         <h3 className="pb-4 text-base font-semibold flex flex-wrap items-center gap-x-2">
           <span>Plan Summary</span>
           <Badge variant={'secondary'} className="bg-primary/10">
@@ -115,7 +115,7 @@ const PlanSummary = ({
         </h3>
         <div className="grid grid-cols-8 gap-4">
           <div className="col-span-5 flex flex-col pr-12">
-            <div className="flex-1 text-sm font-normal flex w-full justify-between pb-1">
+            <div className="flex-1 text-sm font-normal flex w-full justify-between items-center">
               <span className="font-semibold text-base">
                 {imageGenCount} /{maxImageGenCount}{' '}
               </span>
@@ -131,7 +131,7 @@ const PlanSummary = ({
             </div>
           </div>
           <div className="col-span-5 flex flex-col pr-12">
-            <div className="flex-1 text-sm font-normal flex w-full justify-between pb-1">
+            <div className="flex-1 text-sm font-normal flex w-full justify-between items-center">
               <span className="font-semibold text-base">
                 {modelTrainCount} /{maxModelTrainCount}{' '}
               </span>

@@ -1,5 +1,7 @@
 import { getCredits } from '@/app/actions/credit-actions';
 import PlanSummary from '@/components/billing/PlanSummary';
+import Pricing from '@/components/billing/Pricing';
+
 import { getProducts, getSubscription, getUser } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/server';
 
@@ -37,6 +39,13 @@ const BillingPage = async () => {
           products={products || []}
           credits={credits}
         />
+        {subscription.status === 'active' && (
+          <Pricing
+            user={user}
+            products={products ?? []}
+            subscription={subscription}
+          />
+        )}
       </div>
     </section>
   );
