@@ -44,6 +44,11 @@ const BillingPage = async () => {
             user={user}
             products={products ?? []}
             subscription={subscription}
+            showInterval={false}
+            className="!p-0 max-w-full"
+            activeProduct={
+              subscription?.prices?.products?.name.toLowerCase() || 'pro'
+            }
           />
         )}
       </div>

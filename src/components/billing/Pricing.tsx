@@ -32,6 +32,8 @@ interface PricingProps {
   user: User | null;
   products: ProductWithPrices[] | null;
   mostPopularProduct?: string;
+  showInterval?: boolean;
+  className?: string;
 }
 
 const renderPricingButton = ({
@@ -82,6 +84,8 @@ const Pricing = ({
   products,
   mostPopularProduct = 'pro',
   subscription,
+  showInterval = true,
+  className,
 }: PricingProps) => {
   const [billingInterval, setBillingInterval] = useState('month');
   const router = useRouter();
@@ -119,22 +123,29 @@ const Pricing = ({
     return 'stripe checkout function';
   };
   return (
-    <section className="max-w-7xl mx-auto py-16 px-8 w-full flex flex-col">
-      <div className="flex justify-center items-center space-x-4 py-8">
-        <Label htmlFor="pricing-switch" className="font-semibold text-base">
-          Monthly
-        </Label>
-        <Switch
-          id="pricing-switch"
-          checked={billingInterval === 'year'}
-          onCheckedChange={(checked) =>
-            setBillingInterval(checked ? 'year' : 'month')
-          }
-        />
-        <Label htmlFor="pricing-switch" className="font-semibold text-base">
-          Yearly
-        </Label>
-      </div>
+    <section
+      className={cn(
+        'max-w-7xl mx-auto py-16 px-8 w-full flex flex-col',
+        className
+      )}
+    >
+      {showInterval && (
+        <div className="flex justify-center items-center space-x-4 py-8">
+          <Label htmlFor="pricing-switch" className="font-semibold text-base">
+            Monthly
+          </Label>
+          <Switch
+            id="pricing-switch"
+            checked={billingInterval === 'year'}
+            onCheckedChange={(checked) =>
+              setBillingInterval(checked ? 'year' : 'month')
+            }
+          />
+          <Label htmlFor="pricing-switch" className="font-semibold text-base">
+            Yearly
+          </Label>
+        </div>
+      )}
       <div className="grid grid-cols-3 place-items-center mx-auto gap-8 space-y-4">
         {products.map((product) => {
           const price = product?.prices?.find(
