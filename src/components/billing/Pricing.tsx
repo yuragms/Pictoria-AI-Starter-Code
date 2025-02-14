@@ -10,7 +10,8 @@ import { User } from '@supabase/supabase-js';
 import { usePathname, useRouter } from 'next/navigation';
 import { getErrorRedirect } from '@/lib/helpers';
 import { getStripe } from '@/lib/stripe/client';
-import { checkoutWithStripe } from '@/lib/stripe/server';
+import { checkoutWithStripe, createStripePortal } from '@/lib/stripe/server';
+import { toast } from 'sonner';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
@@ -34,6 +35,7 @@ interface PricingProps {
   mostPopularProduct?: string;
   showInterval?: boolean;
   className?: string;
+  activeProduct?: string;
 }
 
 const renderPricingButton = ({
@@ -60,6 +62,21 @@ const renderPricingButton = ({
   //   subscription &&
   //   subscription.prices?.products?.name?.toLowerCase()
   // )
+  if (
+    user &&
+    subscription &&
+    subscription.prices?.products?.name?.toLowerCase() ===
+      product.name?.toLowerCase()
+  ) {
+    return (
+      <Button
+        className="mt-8 w-full font-semibold"
+        onClick={handleStripePortalRequest}
+      >
+        Manage Subscription
+      </Button>
+    );
+  }
 
   if (user && !subscription) {
     return (
@@ -82,10 +99,11 @@ const renderPricingButton = ({
 const Pricing = ({
   user,
   products,
-  mostPopularProduct = 'pro',
+  mostPopularProduct = '',
   subscription,
   showInterval = true,
   className,
+  activeProduct = '',
 }: PricingProps) => {
   const [billingInterval, setBillingInterval] = useState('month');
   const router = useRouter();
@@ -120,7 +138,10 @@ const Pricing = ({
     stripe?.redirectToCheckout({ sessionId });
   };
   const handleStripePortalRequest = async () => {
-    return 'stripe checkout function';
+    // return 'stripe checkout function';
+    toast.info('Redirecting to stripe portal...');
+    const redirectUrl = await createStripePortal(currentPath);
+    return router.push(redirectUrl);
   };
   return (
     <section
@@ -146,8 +167,8 @@ const Pricing = ({
           </Label>
         </div>
       )}
-      <div className="grid grid-cols-3 place-items-center mx-auto gap-8 space-y-4">
-        {products.map((product) => {
+      <div className="grid grid-cols-3 place-items-center mx-auto gap-8 space-y-0">
+        {products?.map((product) => {
           const price = product?.prices?.find(
             (price) => price.interval === billingInterval
           );
@@ -164,15 +185,21 @@ const Pricing = ({
             <div
               key={product.id}
               className={cn(
-                'border bg-background rounded-xl shadow-sm h-fit divide-y divide-border border-border',
-                product.name?.toLowerCase() === mostPopularProduct.toLowerCase()
-                  ? 'border-primary bg-background drop-shadow-md scale-105'
+                'border bg-background rounded-xl shadow-sm h-fit divide-y divide-border',
+                product.name?.toLowerCase() === activeProduct.toLowerCase()
+                  ? 'border-primary bg-background drop-shadow-md'
                   : 'border-border'
               )}
             >
               <div className="p-6">
                 <h2 className="text-2xl leading-6 font-semibold text-foreground flex items-center justify-between">
                   {product.name}
+                  {product.name?.toLowerCase() ===
+                  activeProduct.toLowerCase() ? (
+                    <Badge className="border-border font-semibold">
+                      Selected
+                    </Badge>
+                  ) : null}
                   {product.name?.toLowerCase() ===
                   mostPopularProduct.toLowerCase() ? (
                     <Badge className="border-border font-semibold">
