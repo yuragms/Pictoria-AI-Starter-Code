@@ -13,6 +13,7 @@ export async function getCredits(): Promise<CreditResponse> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  console.log('777777777777777777777');
 
   const { data: creditsData, error } = await supabase
     .from('credits')
@@ -27,6 +28,8 @@ export async function getCredits(): Promise<CreditResponse> {
       data: null,
     };
   }
+
+  console.log('creditsData', creditsData);
 
   return {
     error: null,

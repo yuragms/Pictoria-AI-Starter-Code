@@ -53,7 +53,7 @@ const renderPricingButton = ({
   product: ProductWithPrices;
   price: Price;
   mostPopularProduct: string;
-  handleStripeCheckout: () => Promise<void>;
+  handleStripeCheckout: (price: Price) => Promise<void>;
   handleStripePortalRequest: () => Promise<void>;
 }) => {
   // case 1: User has active subscription for this account
@@ -77,7 +77,19 @@ const renderPricingButton = ({
       </Button>
     );
   }
-
+  //case 2: user is logged in annd has an active subscription for a different product
+  if (user && subscription) {
+    return (
+      <Button
+        className="mt-8 w-full font-semibold"
+        variant={'secondary'}
+        onClick={() => handleStripePortalRequest}
+      >
+        Switch Plan
+      </Button>
+    );
+  }
+  //case 3: logged in user with no subs or different subscriptions
   if (user && !subscription) {
     return (
       <Button
@@ -93,7 +105,19 @@ const renderPricingButton = ({
       </Button>
     );
   }
-  return null;
+  return (
+    <Button
+      className="mt-8 w-full font-semibold"
+      variant={
+        product.name?.toLowerCase() === mostPopularProduct.toLowerCase()
+          ? 'default'
+          : 'secondary'
+      }
+      onClick={() => handleStripeCheckout(price)}
+    >
+      Subscribe
+    </Button>
+  );
 };
 
 const Pricing = ({

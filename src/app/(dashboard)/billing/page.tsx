@@ -24,6 +24,7 @@ const BillingPage = async () => {
   }
 
   const { data: credits } = await getCredits();
+  console.log('credits', credits);
   return (
     <section className="container mx-auto space-y-8">
       <div>
@@ -39,7 +40,7 @@ const BillingPage = async () => {
           products={products || []}
           credits={credits}
         />
-        {subscription.status === 'active' && (
+        {subscription && subscription?.status === 'active' && (
           <Pricing
             user={user}
             products={products ?? []}
