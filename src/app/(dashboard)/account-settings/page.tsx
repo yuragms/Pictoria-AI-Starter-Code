@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AccountSettings = () => {
-  return <div>AccountSettings Page</div>;
+  return <div>AccountSettings Pagee</div>;
 };
 
 export default AccountSettings;
