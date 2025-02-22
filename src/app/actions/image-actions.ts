@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Database } from '@datatypes.types';
 import { imageMeta } from 'image-meta';
 import { randomUUID } from 'crypto';
+import { getCredits } from './credit-actions';
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -24,6 +25,15 @@ export async function generateImageAction(
   if (!process.env.REPLICATE_API_TOKEN) {
     return {
       error: 'The replicate api token is not set!',
+      success: false,
+      data: null,
+    };
+  }
+
+  const { data: credits } = await getCredits();
+  if (!credits?.image_generation_count || credits.image_generation_count <= 0) {
+    return {
+      error: 'No crredits available',
       success: false,
       data: null,
     };
