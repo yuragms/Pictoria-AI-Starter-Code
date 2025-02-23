@@ -53,3 +53,20 @@ export async function logout(): Promise<void> {
   await supabase.auth.signOut();
   redirect('/login');
 }
+
+export async function updateProfile(values: {
+  fullName: string;
+}): Promise<AuthResponse> {
+  const supabase = await createClient();
+  const full_name = values.fullName;
+
+  const { data: profileData, error } = await supabase.auth.updateUser({
+    data: { full_name },
+  });
+
+  return {
+    error: error?.message || 'There was an error updating the profile!',
+    success: !error,
+    data: profileData || null,
+  };
+}
