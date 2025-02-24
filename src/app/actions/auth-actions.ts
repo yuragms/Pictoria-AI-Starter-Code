@@ -70,3 +70,35 @@ export async function updateProfile(values: {
     data: profileData || null,
   };
 }
+
+export async function resetPassword(values: {
+  email: string;
+}): Promise<AuthResponse> {
+  const supabase = await createClient();
+
+  const { data: resetPasswordData, error } =
+    await supabase.auth.resetPasswordForEmail(values.email);
+
+  return {
+    error:
+      error?.message || 'There was an error sending the reset password email!',
+    success: !error,
+    data: resetPasswordData || null,
+  };
+}
+
+export async function changePassword(
+  newPassword: string
+): Promise<AuthResponse> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  return {
+    error: error?.message || 'There was an error changing the password!',
+    success: !error,
+    data: data || null,
+  };
+}
