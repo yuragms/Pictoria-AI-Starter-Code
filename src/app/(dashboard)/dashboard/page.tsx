@@ -1,7 +1,9 @@
 import { getCredits } from '@/app/actions/credit-actions';
 import { getImages } from '@/app/actions/image-actions';
 import { fetchModels } from '@/app/actions/model-actions';
+import QuickActions from '@/components/dashboard/QuickActions';
 import RecentImages from '@/components/dashboard/RecentImages';
+import RecentModels from '@/components/dashboard/RecentModels';
 import StatsCards from '@/components/dashboard/StatsCards';
 import { createClient } from '@/lib/supabase/server';
 
@@ -31,7 +33,10 @@ export default async function Page() {
       />
       <div className="grid gap-6 grid-cols-4">
         <RecentImages images={images?.slice(0, 6) ?? []} />
-        quick actions recennt models
+        <div className="h-full flex flex-col space-y-6">
+          <QuickActions />
+          <RecentModels models={models ?? []} />
+        </div>
       </div>
       {/* <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
