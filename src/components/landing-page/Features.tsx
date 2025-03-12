@@ -32,7 +32,7 @@ const Features = () => {
       id="features"
       className="w-full bg-muted py-32 flex flex-col items-center justify-center"
     >
-      <div className="container mx-auto grid grid-cols-2 gap-8 relative bg-muted">
+      <div className="container px-6 xs:px-8 sm:px-0 sm:mx-8 lg:mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 relative bg-muted">
         <div className="col-span-full space-y-4">
           <AnimatedGradientText className="ml-0 bg-background backdrop-blur-0">
             <span
@@ -43,7 +43,7 @@ const Features = () => {
               Features
             </span>
           </AnimatedGradientText>
-          <h2 className="text-4xl font-bold">
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl font-bold">
             Unlock Unlimited Possibilities with Pictoria AI
           </h2>
           <p className="text-base text-muted-foreground lg:max-w-[75%]">
@@ -77,7 +77,7 @@ const Features = () => {
 
         <div
           className={cn(
-            'h-fit sticky top-32 pl-16 pt-16 rounded-lg border border-r-gray-300 border-b-gray-300 animate-gradient bg-gradient-to-r from-[#627FAB] via-[#B95480] to-[#627FAB] bg-[length:var(--bg-size)_100%] [--bg-size:400%] order-1 lg:order-2'
+            'h-fit lg:sticky top-32 pl-16 pt-16 rounded-lg border border-r-gray-300 border-b-gray-300 animate-gradient bg-gradient-to-r from-[#627FAB] via-[#B95480] to-[#627FAB] bg-[length:var(--bg-size)_100%] [--bg-size:400%] order-1 lg:order-2'
           )}
         >
           <Image
