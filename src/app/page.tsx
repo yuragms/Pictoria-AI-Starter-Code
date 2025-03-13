@@ -1,3 +1,4 @@
+import Faqs from '@/components/landing-page/Faqs';
 import Features from '@/components/landing-page/Features';
 import HeroSection from '@/components/landing-page/HeroSection';
 import Navigation from '@/components/landing-page/Navigation';
@@ -122,6 +123,7 @@ export default async function Home() {
       <Features />
       <Testimonials />
       <Pricing products={products ?? []} />
+      <Faqs />
     </main>
   );
 }
