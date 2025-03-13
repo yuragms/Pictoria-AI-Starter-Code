@@ -59,14 +59,16 @@ const Features = () => {
             return (
               <div
                 key={feature.title}
-                className="flex items-start gap-4 rounded-lg p-12"
+                className="flex items-start gap-2 sm:gap-4 rounded-lg py-8  lg:p-12"
               >
-                <span className="p-2 rounded-md text-background bg-foreground">
+                <span className="p-0 sm:p-2 rounded-md text-foreground sm:text-background bg-muted sm:bg-foreground">
                   {feature.icon}
                 </span>
                 <div>
-                  <h3 className="text-2xl font-medium">{feature.title}</h3>
-                  <p className="text-base text-muted-foreground pt-2">
+                  <h3 className="text-xl sm:text-2xl font-medium">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm xs:text-base text-muted-foreground pt-2">
                     {feature.description}
                   </p>
                 </div>
