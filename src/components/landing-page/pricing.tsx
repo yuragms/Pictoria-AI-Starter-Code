@@ -27,7 +27,7 @@ const Pricing = ({ products, mostPopularProduct = 'pro' }: PricingProps) => {
   console.log(products);
   return (
     <section className="w-full bg-muted flex flex-col items-center justify-center">
-      <div className="w-full container mx-auto py-32 flex flex-col items-center justify-center space-y-8">
+      <div className="w-full container px-6 xs:px-8 sm:px-0 sm:mx-8 lg:mx-auto py-32 flex flex-col items-center justify-center space-y-8">
         {' '}
         <div className="text-center flex flex-col items-center justify-center">
           {' '}
@@ -63,7 +63,7 @@ const Pricing = ({ products, mostPopularProduct = 'pro' }: PricingProps) => {
             Yearly
           </Label>
         </div>
-        <div className="grid grid-cols-3 place-items-center mx-auto gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 place-items-center mx-auto gap-y-8 sm:gap-8 lg:max-w-4xl xl:max-w-none">
           {products.map((product) => {
             const price = product?.prices?.find(
               (price) => price.interval === billingInterval

@@ -27,7 +27,7 @@ const NavItems = () => {
         FAQs
       </Link>
       <Link
-        href="/login?stte-signup"
+        href="/login?state=signup"
         className="text-sm font-medium hover:underline underline-offset-4"
       >
         <Button>Sign up</Button>
